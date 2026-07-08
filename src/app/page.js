@@ -25,6 +25,20 @@ export default function Home() {
         <span className="badge">Case #001 · Motorsport Edition</span>
       </header>
 
+      {/* ── INTRO ── */}
+      <section className="intro">
+        <h2 className="introTitle">
+          Five days. One story. The truth behind the headlines.
+        </h2>
+        <p className="introText">
+          Every week, The Arc Five investigates one unresolved moment in
+          motorsport history — a crash, a scandal, a decision nobody can fully
+          explain. Delivered straight to your inbox each morning, in time for
+          your commute. Monday sets the scene. Friday delivers the verdict. In
+          between, the evidence.
+        </p>
+      </section>
+
       {/* ── DAY NAV ── */}
       <nav className="dayNav">
         {DAYS.map((d, i) => (
