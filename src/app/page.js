@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const DAYS = [
   { day: "Monday", label: "The Scene" },
@@ -10,9 +10,101 @@ const DAYS = [
   { day: "Friday", label: "The Verdict" },
 ]
 
+const UPCOMING = [
+  {
+    caseNumber: "Case #002",
+    title: "The Deadliest Race in History",
+    series: "Le Mans · 1955",
+    teaser:
+      "Le Mans 1955 killed 84 people — the worst accident in motorsport history. Mercedes withdrew from racing entirely. Were they pressured to?",
+  },
+  {
+    caseNumber: "Case #003",
+    title: "Renault's Deliberate Crash",
+    series: "F1 · 2008",
+    teaser:
+      "A driver was ordered to crash his own car to fix a race for his teammate. How long did Renault get away with it — and who finally talked?",
+  },
+  {
+    caseNumber: "Case #004",
+    title: "Was It Fixed?",
+    series: "F1 · 1994",
+    teaser:
+      "The championship battle that ended in a collision. Decades on, some still believe it wasn't an accident at all.",
+  },
+  {
+    caseNumber: "Case #005",
+    title: "The Race That Broke Formula One",
+    series: "F1 · 2021",
+    teaser:
+      "One late-race decision changed a championship and split the sport in two. What really happened in race control?",
+  },
+  {
+    caseNumber: "Case #006",
+    title: "The Posthumous Champion",
+    series: "F1 · 1970",
+    teaser:
+      "The only driver ever crowned world champion after his own death. What actually happened at Monza — and why did it take so long to explain?",
+  },
+  {
+    caseNumber: "Case #007",
+    title: "The Inferno at the 'Ring",
+    series: "F1 · 1976",
+    teaser:
+      "A fire that should have killed him, a barrier that should never have failed, and a comeback six weeks later that still defies belief.",
+  },
+  {
+    caseNumber: "Case #008",
+    title: "The Fastest Car Nobody Could Explain",
+    series: "F1 · 2009",
+    teaser:
+      "A team built from the wreckage of a collapsed manufacturer somehow won on debut. Rivals cried foul for a year. Were they right?",
+  },
+  {
+    caseNumber: "Case #009",
+    title: "The Finish Line Photograph",
+    series: "Le Mans · 1966",
+    teaser:
+      "One manufacturer orchestrated the perfect podium finish — then the photograph revealed something that changed the result forever.",
+  },
+  {
+    caseNumber: "Case #010",
+    title: "The Helicopter That Never Landed",
+    series: "Rally · 2007",
+    teaser:
+      "A champion, his family, and a young boy vanish on a quiet afternoon. The investigation that followed asked questions rallying still hasn't answered.",
+  },
+  {
+    caseNumber: "Case #011",
+    title: "The Tyre That Ended a Career",
+    series: "NASCAR · 2001",
+    teaser:
+      "A safety device sat unused in the garage on the day it might have saved a legend. Why wasn't it fitted — and who decided that?",
+  },
+]
+
 export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0)
-  const isLocked = activeIndex !== 0
+  const [theme, setTheme] = useState("light")
+  const isLocked = activeIndex !== 0 && activeIndex !== 5
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("arcfive-theme")
+    if (stored) {
+      setTheme(stored)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme)
+    window.localStorage.setItem("arcfive-theme", theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme((t) => (t === "dark" ? "light" : "dark"))
+  }
+
+  const toggleShareModal = () => {}
 
   return (
     <>
@@ -22,7 +114,46 @@ export default function Home() {
           <span className="logoArc">Arc</span>
           <span className="logoFive">Five</span>
         </div>
-        <span className="badge">Case #001 · Motorsport Edition</span>
+        <div className="headerRight">
+          <span className="badge">Case #001 · Motorsport Edition</span>
+          <button
+            className="themeToggle"
+            onClick={toggleTheme}
+            aria-label="Toggle light and dark theme"
+          >
+            {theme === "dark" ? (
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="12" cy="12" r="4" />
+                <line x1="12" y1="2" x2="12" y2="4" />
+                <line x1="12" y1="20" x2="12" y2="22" />
+                <line x1="4.93" y1="4.93" x2="6.34" y2="6.34" />
+                <line x1="17.66" y1="17.66" x2="19.07" y2="19.07" />
+                <line x1="2" y1="12" x2="4" y2="12" />
+                <line x1="20" y1="12" x2="22" y2="12" />
+                <line x1="4.93" y1="19.07" x2="6.34" y2="17.66" />
+                <line x1="17.66" y1="6.34" x2="19.07" y2="4.93" />
+              </svg>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+              </svg>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* ── INTRO ── */}
@@ -31,7 +162,7 @@ export default function Home() {
           Five days. One story. The truth behind the headlines.
         </h2>
         <p className="introText">
-          Every week, The Arc Five investigates one unresolved moment in
+          Every week, The ArcFive investigates one unresolved moment in
           motorsport history — a crash, a scandal, a decision nobody can fully
           explain. Delivered straight to your inbox each morning, in time for
           your commute. Monday sets the scene. Friday delivers the verdict. In
@@ -50,6 +181,12 @@ export default function Home() {
             {d.day} · {d.label}
           </button>
         ))}
+        <button
+          className={`tab ${activeIndex === 5 ? "tabActive" : ""}`}
+          onClick={() => setActiveIndex(5)}
+        >
+          Coming Up
+        </button>
       </nav>
 
       {/* ── MONDAY ── */}
@@ -167,7 +304,7 @@ export default function Home() {
             </p>
 
             <div className="hook">
-              <strong>Tomorrow on The Arc Five</strong>
+              <strong>Tomorrow on The ArcFive</strong>
               Inside the wreckage, investigators found something that
               shouldn&apos;t have been there. A piece of modified steering
               column — cut, welded, and never declared to the FIA. Williams said
@@ -269,7 +406,7 @@ export default function Home() {
             </p>
 
             <div className="hook">
-              <strong>Tomorrow on The Arc Five</strong>
+              <strong>Tomorrow on The ArcFive</strong>
               One theory points to the steering column. Another points to a
               tyre. A third — the most controversial — suggests the crash was
               caused by a regulation change the FIA introduced that very season.
@@ -471,7 +608,7 @@ export default function Home() {
             </p>
 
             <div className="hook">
-              <strong>Tomorrow on The Arc Five</strong>
+              <strong>Tomorrow on The ArcFive</strong>
               Friday&apos;s verdict asks the question that underpins everything:
               does it matter, at this distance, that we don&apos;t know?
             </div>
@@ -575,7 +712,7 @@ export default function Home() {
             </p>
 
             <hr className="divider" />
-            <p className="nextTeaseLabel">Next Week on The Arc Five</p>
+            <p className="nextTeaseLabel">Next Week on The ArcFive</p>
             <p className="nextTeaseText">
               The 1955 Le Mans disaster killed 84 people — the worst accident in
               motorsport history. Mercedes withdrew from racing entirely. But
@@ -585,11 +722,44 @@ export default function Home() {
         </section>
       )}
 
+      {/* ── COMING UP ── */}
+      {activeIndex === 5 && (
+        <section className="panel">
+          <div className="dayLabel">Coming Up — Future Cases</div>
+          <h1 className="subject">What&apos;s Next on The ArcFive</h1>
+          <p className="subtitle">
+            A look ahead at upcoming investigations. New cases land every Monday
+            — subscribe so you never miss the opening chapter.
+          </p>
+
+          <div className="upcomingList">
+            {UPCOMING.map((c) => (
+              <div key={c.caseNumber} className="upcomingItem">
+                <div className="upcomingMeta">
+                  <span>{c.caseNumber}</span>
+                  <span>{c.series}</span>
+                </div>
+                <h3 className="upcomingTitle">{c.title}</h3>
+                <p className="upcomingTeaser">{c.teaser}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* ── SUBSCRIBE BAR ── */}
       <div className="subscribeBar">
         <p className="subscribeText">
-          {isLocked ? (
-            <>Enjoying this case? Share it with another motorsport fan.</>
+          {activeIndex === 5 ? (
+            <>
+              <strong>New cases land every Monday.</strong> Subscribe so you
+              never miss the opening chapter.
+            </>
+          ) : isLocked ? (
+            <>
+              <strong>Enjoying this case?</strong> Share it with another
+              motorsport fan.
+            </>
           ) : (
             <>
               <strong>You&apos;re reading the free Monday edition.</strong>{" "}
@@ -598,7 +768,9 @@ export default function Home() {
           )}
         </p>
         <button className="subscribeButton">
-          {isLocked ? "Share this case" : "Subscribe — £6/month"}
+          {isLocked && activeIndex !== 5
+            ? "Share this case"
+            : "Subscribe — £6/month"}
         </button>
       </div>
     </>

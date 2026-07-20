@@ -7,7 +7,8 @@ export const metadata = {
     "A five-day investigation into the death of Ayrton Senna at Imola, 1994.",
 }
 
-const GA_MEASUREMENT_ID = "GTM-K5Z429SJ"
+// Replace with your own GA4 Measurement ID (starts with "G-")
+const GA_MEASUREMENT_ID = "G-FF2L1C01ZP"
 
 export default function RootLayout({ children }) {
   return (
@@ -26,18 +27,7 @@ export default function RootLayout({ children }) {
           `}
         </Script>
       </head>
-
-      <body>
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-ABCDEFGH"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
