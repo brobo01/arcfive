@@ -113,7 +113,6 @@ export default function Home() {
   }, [])
 
   const toggleTheme = () => {
-    console.log("ehllo")
     setTheme((t) => (t === "dark" ? "light" : "dark"))
   }
 
@@ -151,7 +150,7 @@ export default function Home() {
       formData.append("form-name", "subscribe")
       formData.append("email", email)
 
-      const res = await fetch("/", {
+      const res = await fetch("/__forms.html", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: formData.toString(),
@@ -168,14 +167,13 @@ export default function Home() {
     }
   }
 
-  // const [shareUrl, setShareUrl] = useState("https://thearcfive.com")
-  const shareUrl = "https://thearcfive.com"
+  const [shareUrl, setShareUrl] = useState("https://thearcfive.com")
   const shareText =
     "The stories motorsport never fully explained — worth a read:"
 
-  // useEffect(() => {
-  //   setShareUrl(window.location.href)
-  // }, [])
+  useEffect(() => {
+    setShareUrl(window.location.href)
+  }, [])
 
   return (
     <>
@@ -226,6 +224,7 @@ export default function Home() {
           </button>
         </div>
       </header>
+
       {/* ── INTRO ── */}
       <section className="intro">
         <h2 className="introTitle">
@@ -239,6 +238,7 @@ export default function Home() {
           between, the evidence.
         </p>
       </section>
+
       {/* ── DAY NAV ── */}
       <nav className="dayNav">
         {DAYS.map((d, i) => (
@@ -257,6 +257,7 @@ export default function Home() {
           Coming Up
         </button>
       </nav>
+
       {/* ── MONDAY ── */}
       {activeIndex === 0 && (
         <section className="panel">
@@ -382,6 +383,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* ── TUESDAY ── */}
       {activeIndex === 1 && (
         <section className="panel">
@@ -481,6 +483,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* ── WEDNESDAY ── */}
       {activeIndex === 2 && (
         <section className="panel">
@@ -589,6 +592,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* ── THURSDAY ── */}
       {activeIndex === 3 && (
         <section className="panel">
@@ -680,6 +684,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* ── FRIDAY ── */}
       {activeIndex === 4 && (
         <section className="panel">
@@ -785,6 +790,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* ── COMING UP ── */}
       {activeIndex === 5 && (
         <section className="panel">
@@ -809,6 +815,7 @@ export default function Home() {
           </div>
         </section>
       )}
+
       {/* ── SUBSCRIBE BAR ── */}
       <div className="subscribeBar">
         <p className="subscribeText">
@@ -835,16 +842,7 @@ export default function Home() {
             : "Register your interest"}
         </button>
       </div>
-      ── Hidden static form for Netlify build-time form detection ──
-      <form
-        name="subscribe"
-        data-netlify="true"
-        netlify-honeypot="bot-field"
-        hidden
-      >
-        <input type="email" name="email" />
-        <input type="text" name="bot-field" />
-      </form>
+
       {/* ── MODAL ── */}
       {modalType && (
         <div className="modalOverlay" onClick={closeModal}>
