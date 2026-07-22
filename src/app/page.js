@@ -226,7 +226,6 @@ export default function Home() {
           </button>
         </div>
       </header>
-
       {/* ── INTRO ── */}
       <section className="intro">
         <h2 className="introTitle">
@@ -240,7 +239,6 @@ export default function Home() {
           between, the evidence.
         </p>
       </section>
-
       {/* ── DAY NAV ── */}
       <nav className="dayNav">
         {DAYS.map((d, i) => (
@@ -259,7 +257,6 @@ export default function Home() {
           Coming Up
         </button>
       </nav>
-
       {/* ── MONDAY ── */}
       {activeIndex === 0 && (
         <section className="panel">
@@ -385,7 +382,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
       {/* ── TUESDAY ── */}
       {activeIndex === 1 && (
         <section className="panel">
@@ -485,7 +481,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
       {/* ── WEDNESDAY ── */}
       {activeIndex === 2 && (
         <section className="panel">
@@ -594,7 +589,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
       {/* ── THURSDAY ── */}
       {activeIndex === 3 && (
         <section className="panel">
@@ -686,7 +680,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
       {/* ── FRIDAY ── */}
       {activeIndex === 4 && (
         <section className="panel">
@@ -792,7 +785,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
       {/* ── COMING UP ── */}
       {activeIndex === 5 && (
         <section className="panel">
@@ -817,7 +809,6 @@ export default function Home() {
           </div>
         </section>
       )}
-
       {/* ── SUBSCRIBE BAR ── */}
       <div className="subscribeBar">
         <p className="subscribeText">
@@ -844,8 +835,7 @@ export default function Home() {
             : "Register your interest"}
         </button>
       </div>
-
-      {/* ── Hidden static form for Netlify build-time form detection ──
+      ── Hidden static form for Netlify build-time form detection ──
       <form
         name="subscribe"
         data-netlify="true"
@@ -854,8 +844,7 @@ export default function Home() {
       >
         <input type="email" name="email" />
         <input type="text" name="bot-field" />
-      </form> */}
-
+      </form>
       {/* ── MODAL ── */}
       {modalType && (
         <div className="modalOverlay" onClick={closeModal}>
