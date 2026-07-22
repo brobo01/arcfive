@@ -86,6 +86,10 @@ const UPCOMING = [
 export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0)
   const [theme, setTheme] = useState("light")
+  const [modalType, setModalType] = useState(null) // null | 'share' | 'subscribe'
+  const [email, setEmail] = useState("")
+  const [subscribeStatus, setSubscribeStatus] = useState("idle") // idle | loading | success | error
+  const [copied, setCopied] = useState(false)
   const isLocked = activeIndex !== 0 && activeIndex !== 5
 
   useEffect(() => {
@@ -100,11 +104,78 @@ export default function Home() {
     window.localStorage.setItem("arcfive-theme", theme)
   }, [theme])
 
+  useEffect(() => {
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") closeModal()
+    }
+    window.addEventListener("keydown", onKeyDown)
+    return () => window.removeEventListener("keydown", onKeyDown)
+  }, [])
+
   const toggleTheme = () => {
+    console.log("ehllo")
     setTheme((t) => (t === "dark" ? "light" : "dark"))
   }
 
-  const toggleShareModal = () => {}
+  const openModal = () => {
+    if (isLocked && activeIndex !== 5) {
+      setModalType("share")
+    } else {
+      setModalType("subscribe")
+    }
+  }
+
+  const closeModal = () => {
+    setModalType(null)
+    setCopied(false)
+    setSubscribeStatus("idle")
+  }
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      // clipboard unavailable — fail silently, link is still visible to select manually
+    }
+  }
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault()
+    if (!email || subscribeStatus === "loading") return
+    setSubscribeStatus("loading")
+
+    try {
+      const formData = new URLSearchParams()
+      formData.append("form-name", "subscribe")
+      formData.append("email", email)
+
+      const res = await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
+      })
+
+      if (res.ok) {
+        setSubscribeStatus("success")
+        setEmail("")
+      } else {
+        setSubscribeStatus("error")
+      }
+    } catch (err) {
+      setSubscribeStatus("error")
+    }
+  }
+
+  // const [shareUrl, setShareUrl] = useState("https://thearcfive.com")
+  const shareUrl = "https://thearcfive.com"
+  const shareText =
+    "The stories motorsport never fully explained — worth a read:"
+
+  // useEffect(() => {
+  //   setShareUrl(window.location.href)
+  // }, [])
 
   return (
     <>
@@ -729,7 +800,7 @@ export default function Home() {
           <h1 className="subject">What&apos;s Next on The ArcFive</h1>
           <p className="subtitle">
             A look ahead at upcoming investigations. New cases land every Monday
-            — subscribe so you never miss the opening chapter.
+            — register your interest so you never miss the opening chapter.
           </p>
 
           <div className="upcomingList">
@@ -752,8 +823,8 @@ export default function Home() {
         <p className="subscribeText">
           {activeIndex === 5 ? (
             <>
-              <strong>New cases land every Monday.</strong> Subscribe so you
-              never miss the opening chapter.
+              <strong>New cases land every Monday.</strong> Register your
+              interest so you never miss the opening chapter.
             </>
           ) : isLocked ? (
             <>
@@ -763,16 +834,164 @@ export default function Home() {
           ) : (
             <>
               <strong>You&apos;re reading the free Monday edition.</strong>{" "}
-              Subscribe to unlock Tuesday–Friday every week.
+              Register your interest to be notified when new chapters unlock.
             </>
           )}
         </p>
-        <button className="subscribeButton">
+        <button className="subscribeButton" onClick={openModal}>
           {isLocked && activeIndex !== 5
             ? "Share this case"
-            : "Subscribe — £6/month"}
+            : "Register your interest"}
         </button>
       </div>
+
+      {/* ── Hidden static form for Netlify build-time form detection ──
+      <form
+        name="subscribe"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        hidden
+      >
+        <input type="email" name="email" />
+        <input type="text" name="bot-field" />
+      </form> */}
+
+      {/* ── MODAL ── */}
+      {modalType && (
+        <div className="modalOverlay" onClick={closeModal}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button
+              className="modalClose"
+              onClick={closeModal}
+              aria-label="Close"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            {modalType === "share" && (
+              <>
+                <p className="modalEyebrow">Share this case</p>
+                <h3 className="modalTitle">
+                  Send this to someone who&apos;d love it
+                </h3>
+                <p className="modalText">
+                  Every share helps another motorsport fan find their way to
+                  The&nbsp;ArcFive.
+                </p>
+
+                <div className="shareRow">
+                  <a
+                    className="shareButton"
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                      shareText,
+                    )}&url=${encodeURIComponent(shareUrl)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    X / Twitter
+                  </a>
+                  <a
+                    className="shareButton"
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(
+                      shareText + " " + shareUrl,
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    WhatsApp
+                  </a>
+                  <a
+                    className="shareButton"
+                    href={`https://www.reddit.com/submit?url=${encodeURIComponent(
+                      shareUrl,
+                    )}&title=${encodeURIComponent(shareText)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Reddit
+                  </a>
+                  <a
+                    className="shareButton"
+                    href={`mailto:?subject=${encodeURIComponent(
+                      "Worth a read",
+                    )}&body=${encodeURIComponent(shareText + " " + shareUrl)}`}
+                  >
+                    Email
+                  </a>
+                </div>
+
+                <div className="copyLinkRow">
+                  <input
+                    className="copyLinkInput"
+                    value={shareUrl}
+                    readOnly
+                    onFocus={(e) => e.target.select()}
+                  />
+                  <button className="copyLinkButton" onClick={handleCopyLink}>
+                    {copied ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {modalType === "subscribe" && (
+              <>
+                <p className="modalEyebrow">Case #001 · Motorsport Edition</p>
+                <h3 className="modalTitle">Register your interest</h3>
+                <p className="modalText">
+                  We&apos;re putting the finishing touches on The&nbsp;ArcFive.
+                  Pop your email in and we&apos;ll let you know the moment new
+                  cases go live — no charge, no commitment.
+                </p>
+
+                {subscribeStatus === "success" ? (
+                  <p className="modalSuccess">
+                    You&apos;re on the list. We&apos;ll be in touch as soon as
+                    we launch.
+                  </p>
+                ) : (
+                  <form className="emailForm" onSubmit={handleSubscribe}>
+                    <input
+                      className="emailInput"
+                      type="email"
+                      placeholder="you@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    <button
+                      className="emailSubmit"
+                      type="submit"
+                      disabled={subscribeStatus === "loading"}
+                    >
+                      {subscribeStatus === "loading" ? "Joining…" : "Register"}
+                    </button>
+                  </form>
+                )}
+
+                {subscribeStatus === "error" && (
+                  <p className="modalError">
+                    Something went wrong — mind trying again?
+                  </p>
+                )}
+
+                <p className="modalNote">
+                  Free to register. We&apos;ll email you when we launch.
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </>
   )
 }
