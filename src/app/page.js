@@ -116,6 +116,30 @@ export default function Home() {
     setTheme((t) => (t === "dark" ? "light" : "dark"))
   }
 
+  const changeTab = (index) => {
+    const selectedDay = index === 5 ? "Coming Up" : DAYS[index]?.day
+
+    if (typeof window !== "undefined" && window.gtag && selectedDay) {
+      window.gtag("event", "daynav_click", {
+        day: selectedDay,
+      })
+    }
+
+    if (index === 4) {
+      setModalType("subscribe")
+    }
+
+    setActiveIndex(index)
+  }
+
+  // const changeTab = (index) => {
+  //   if (index === 4) {
+  //     setModalType("subscribe")
+  //   }
+  //   setActiveIndex(index)
+  //   console.log(index)
+  // }
+
   const openModal = () => {
     if (isLocked && activeIndex !== 5) {
       setModalType("share")
@@ -245,17 +269,24 @@ export default function Home() {
           <button
             key={d.day}
             className={`tab ${i === activeIndex ? "tabActive" : ""}`}
-            onClick={() => setActiveIndex(i)}
+            onClick={() => changeTab(i)}
+            // onClick={() => setActiveIndex(i)}
           >
             {d.day} · {d.label}
           </button>
         ))}
         <button
           className={`tab ${activeIndex === 5 ? "tabActive" : ""}`}
-          onClick={() => setActiveIndex(5)}
+          onClick={() => changeTab(5)}
         >
           Coming Up
         </button>
+        {/* <button
+          className={`tab ${activeIndex === 5 ? "tabActive" : ""}`}
+          onClick={() => setActiveIndex(5)}
+        >
+          Coming Up
+        </button> */}
       </nav>
 
       {/* ── MONDAY ── */}
@@ -936,8 +967,11 @@ export default function Home() {
                 <h3 className="modalTitle">Register your interest</h3>
                 <p className="modalText">
                   We&apos;re putting the finishing touches on The&nbsp;ArcFive.
-                  Pop your email in and we&apos;ll let you know the moment new
-                  cases go live — no charge, no commitment.
+                  Be first in line by joining our launch list.
+                </p>
+                <p className="modalText bold">
+                  As a thank you for registering, you&apos;ll receive your first
+                  8 weeks completely free.
                 </p>
 
                 {subscribeStatus === "success" ? (
@@ -972,7 +1006,8 @@ export default function Home() {
                 )}
 
                 <p className="modalNote">
-                  Free to register. We&apos;ll email you when we launch.
+                  Free to register. No commitment. We&apos;ll only email you
+                  when we launch.
                 </p>
               </>
             )}
