@@ -120,7 +120,7 @@ export default function Home() {
     const selectedDay = index === 5 ? "Coming Up" : DAYS[index]?.day
 
     if (typeof window !== "undefined" && window.gtag && selectedDay) {
-      window.gtag("event", "daynav_click", {
+      window.gtag?.("event", "daynav_click", {
         day: selectedDay,
       })
     }
@@ -132,19 +132,21 @@ export default function Home() {
     setActiveIndex(index)
   }
 
-  // const changeTab = (index) => {
-  //   if (index === 4) {
-  //     setModalType("subscribe")
-  //   }
-  //   setActiveIndex(index)
-  //   console.log(index)
-  // }
-
   const openModal = () => {
     if (isLocked && activeIndex !== 5) {
       setModalType("share")
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag?.("event", "modal_click", {
+          modal: "share",
+        })
+      }
     } else {
       setModalType("subscribe")
+      if (typeof window !== "undefined" && window.gtag) {
+        window.gtag?.("event", "modal_click", {
+          modal: "subscribe",
+        })
+      }
     }
   }
 
@@ -270,7 +272,6 @@ export default function Home() {
             key={d.day}
             className={`tab ${i === activeIndex ? "tabActive" : ""}`}
             onClick={() => changeTab(i)}
-            // onClick={() => setActiveIndex(i)}
           >
             {d.day} · {d.label}
           </button>
@@ -281,12 +282,6 @@ export default function Home() {
         >
           Coming Up
         </button>
-        {/* <button
-          className={`tab ${activeIndex === 5 ? "tabActive" : ""}`}
-          onClick={() => setActiveIndex(5)}
-        >
-          Coming Up
-        </button> */}
       </nav>
 
       {/* ── MONDAY ── */}

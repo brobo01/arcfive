@@ -18,16 +18,33 @@ export default function RootLayout({ children }) {
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
           strategy="lazyOnload"
         />
-        <Script id="ga4-init" strategy="lazyOnload">
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function(){window.dataLayer.push(arguments);}
+            window.gtag('js', new Date());
+            window.gtag('config', '${GA_MEASUREMENT_ID}');
+          `}
+        </Script>
+        {/* <Script id="ga4-init" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
-        </Script>
+        </Script> */}
       </head>
       <body suppressHydrationWarning>{children}</body>
     </html>
   )
 }
+
+;<Script id="ga4-init" strategy="afterInteractive">
+  {`
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){window.dataLayer.push(arguments);}
+    window.gtag('js', new Date());
+    window.gtag('config', '${GA_MEASUREMENT_ID}');
+  `}
+</Script>
